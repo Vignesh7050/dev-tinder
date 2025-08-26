@@ -1,0 +1,15 @@
+{
+  "name": "dev-tinder",
+  "version": "1.0.0",
+  "description": "Node js learning from Namaste NodeJs course",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "author": "Vignesh Acharya",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
