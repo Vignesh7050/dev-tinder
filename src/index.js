@@ -1,11 +1,20 @@
-const express = require("express");
+const express = require('express');
+require('dotenv').config();
+
+const connectToDb = require('./config/database');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
-app.use("/test", (req, res)=> {
-    res.send("Calling route test")
-})
+app.use('/auth', authRoutes);
 
-app.listen(7777, ()=> {
-    console.log("Express app is listening on port 7777")
-})
+connectToDb()
+  .then(() => {
+    console.log('DATABASE CONNECTION SUCCESSFUL.');
+    app.listen(7777, () => {
+      console.log('APP STARTED LISTENING PORT 7777.');
+    });
+  })
+  .catch((error) => {
+    console.log('ERROR CONNECTING TO THE DATABASE: ', error.message);
+  });
