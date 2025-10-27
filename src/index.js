@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const connectToDb = require('./config/database');
 const authRoutes = require('./routes/auth');
+const profileRoutes = require('./routes/profile');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/auth', authRoutes);
+app.use('/profile', profileRoutes);
 
 connectToDb()
   .then(() => {
