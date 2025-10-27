@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 const authRoutes = express();
 
@@ -34,14 +35,16 @@ authRoutes.post('/signup', async (req, res) => {
       photoUrl,
       emailId,
       skills,
-      password: hashedPassword
+      password: hashedPassword,
     };
 
     const userInstance = new User(user);
 
     await userInstance.save();
 
-    res.status(200).send({ message: `User added successfully. User name: ${firstName} ${lastName}` });
+    res.status(200).send({
+      message: `User added successfully. User name: ${firstName} ${lastName}`,
+    });
   } catch (error) {
     res.status(400).send({ message: `ERROR: ${error.message}` });
   }
@@ -51,22 +54,27 @@ authRoutes.get('/login', async (req, res) => {
   try {
     const { emailId, password } = req.body;
 
-    const user = await User.findOne({emailId: emailId});
+    const user = await User.findOne({ emailId: emailId });
 
-    if(!user) {
+    if (!user) {
       throw new Error('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if(!isPasswordValid) {
-      throw new Error('Invalid credentials')
+    if (!isPasswordValid) {
+      throw new Error('Invalid credentials');
     }
 
-    res.send({message: 'Login Successful'})
-  } catch(error) {
-    res.status(404).send('ERROR: ' + error.message)
+    const token = jwt.sign({ _id: user._id }, 'Secrete@123$JWT', {
+      expiresIn: '5h',
+    });
+
+    res.cookie('token', token, { maxAge: 5 * 60 * 60 * 1000 });
+    res.status(200).send({ message: 'login successful' });
+  } catch (error) {
+    res.status(400).send({ message: error.message });
   }
-})
+});
 
 module.exports = authRoutes;
