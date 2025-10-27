@@ -70,7 +70,11 @@ authRoutes.get('/login', async (req, res) => {
       expiresIn: '5h',
     });
 
-    res.cookie('token', token, { maxAge: 5 * 60 * 60 * 1000 });
+    res.cookie('token', token, {
+      maxAge: 5 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+    });
     res.status(200).send({ message: 'login successful' });
   } catch (error) {
     res.status(400).send({ message: error.message });
